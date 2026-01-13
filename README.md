@@ -13,24 +13,45 @@ O `top.sv` instancia as memorias de instrucoes e dados e conecta ao core.
 
 ## Topo
 ```
-           +-------------------------+
-           |          top            |
-           |                         |
-imem <---->|  instruction_memory     |
-           |           |             |
-           |           v             |
-           |         RV32I           |
-           |     +-----------+       |
-           |     | control   |       |
-           |     +-----------+       |
-           |           |             |
-           |     +-----------+       |
-           |     | datapath  |<----->| dmem
-           |     +-----------+       |
-           |                         |
-           |  data_memory <--------->|
-           +-------------------------+
+             +------------------------------------+
+             |                top                 |
+             |                                    |
+             |  imem_req/imem_addr   imem_data    |
+             |    +----------------------------+  |
+             |    |   instruction_memory       |  |
+             |    +-------------+--------------+  |
+             |                  |                 |
+             |                  v                 |
+             |            +-----------+           |
+             |            |   RV32I   |           |
+             |            |           |           |
+             |  control ->| control   |           |
+             |            +-----+-----+           |
+             |                  |                 |
+             |   pc/op/alu/wb   |                 |
+             |                  v                 |
+             |            +-----------+           |
+             | dmem_* <-> | datapath  | <-> dmem  |
+             |            +-----------+           |
+             |                  |                 |
+             |                  v                 |
+             |            +-----------+           |
+             |            | data_mem  |           |
+             |            +-----------+           |
+             +------------------------------------+
 ```
+
+Sinais principais no topo:
+- Instrucao: `imem_req`, `imem_addr`, `imem_data`
+- Dados: `dmem_req`, `dmem_wr_en`, `dmem_size`, `dmem_zero_extend`, `dmem_addr`, `dmem_wr_data`, `dmem_rd_data`
+
+Sinais internos (control -> datapath):
+- `pc_sel`, `op1_sel`, `op2_sel`
+- `alu_op`, `rf_wr_data_sel`, `rf_wr_en`
+
+Sinais internos (datapath -> control):
+- `opcode`, `funct3`, `funct7`
+- `r_type`, `i_type`, `s_type`, `b_type`, `u_type`, `j_type`
 
 ## Arquivos
 - `alu.sv`: implementa as operacoes da ULA.
