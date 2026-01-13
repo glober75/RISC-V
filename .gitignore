@@ -1,0 +1,11 @@
+# Simulacao/artefatos
+*.out
+*.vcd
+*.wlf
+*.mpf
+*.mti
+
+# Gerados/local
+*.mem
+*.bak
+work/
