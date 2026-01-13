@@ -11,20 +11,41 @@ O design esta organizado em dois blocos principais:
 O modulo `RV32I.sv` integra o `datapath` com o `control` e expoe as interfaces de memoria.
 O `top.sv` instancia as memorias de instrucoes e dados e conecta ao core.
 
-## Estrutura
-- datapath.sv
-- RV32I.sv
-- control.sv
-- top.sv
-- alu.sv
-- branch_control.sv
-- decode.sv
-- fetch.sv
-- instruction_memory.sv
-- data_memory.sv
-- register_file.sv
-- riscv_pkg.sv
-- test_bench.sv
+## Topo
+```
+           +-------------------------+
+           |          top            |
+           |                         |
+imem <---->|  instruction_memory     |
+           |           |             |
+           |           v             |
+           |         RV32I           |
+           |     +-----------+       |
+           |     | control   |       |
+           |     +-----------+       |
+           |           |             |
+           |     +-----------+       |
+           |     | datapath  |<----->| dmem
+           |     +-----------+       |
+           |                         |
+           |  data_memory <--------->|
+           +-------------------------+
+```
+
+## Arquivos
+- `alu.sv`: implementa as operacoes da ULA.
+- `branch_control.sv`: decide se um branch eh tomado com base em `funct3`.
+- `control.sv`: gera sinais de controle a partir do opcode/functs.
+- `data_memory.sv`: memoria de dados com acesso por byte/half/word.
+- `datapath.sv`: caminho de dados com PC, fetch, decode, RF, ALU e writeback.
+- `decode.sv`: separa campos da instrucao e gera imediatos.
+- `fetch.sv`: solicita a instrucao na memoria de instrucoes.
+- `instruction_memory.sv`: memoria de instrucoes inicializada por arquivo `.mem`.
+- `register_file.sv`: banco de registradores x0..x31 com escrita sincrona.
+- `riscv_pkg.sv`: tipos, enums e constantes do ISA.
+- `RV32I.sv`: integra `control` + `datapath` e expoe interfaces de memoria.
+- `test_bench.sv`: testbench basico para simulacao.
+- `top.sv`: conecta o core RV32I as memorias.
 
 ## Como simular (Icarus Verilog)
 make run
